@@ -10,8 +10,8 @@ from playwright.sync_api import sync_playwright
 from data_foundry.config import (
     BASE_URL,
     LIST_URL,
-    OUTPUT_DIR,
     PDF_DIR,
+    BRZ_LAYER_DIR
 )
 
 SESSION = cffi_requests.Session(impersonate="chrome")
@@ -165,9 +165,6 @@ def download_pdf(url: str, filepath: Path) -> bool:
 
 
 def main():
-    PDF_DIR.mkdir(parents=True, exist_ok=True)
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-
     print("Fetching listing page...")
     html = fetch_page(LIST_URL)
     if not html:
@@ -217,11 +214,11 @@ def main():
 
         catalog.append(entry)
 
-    catalog_path = OUTPUT_DIR / "catalog.json"
+    catalog_path = BRZ_LAYER_DIR / "catalog.json"
     with open(catalog_path, "w", encoding="utf-8") as f:
         json.dump(catalog, f, ensure_ascii=False, indent=2)
 
-    metadata_path = OUTPUT_DIR / "metadata.json"
+    metadata_path = BRZ_LAYER_DIR / "metadata.json"
     with open(metadata_path, "w", encoding="utf-8") as f:
         json.dump(all_metadata, f, ensure_ascii=False, indent=2)
 
@@ -229,7 +226,6 @@ def main():
     print(f"\nDone. {downloaded}/{len(catalog)} PDFs downloaded.")
     print(f"Catalog saved to {catalog_path}")
     print(f"Metadata saved to {metadata_path}")
-
 
 if __name__ == "__main__":
     main()

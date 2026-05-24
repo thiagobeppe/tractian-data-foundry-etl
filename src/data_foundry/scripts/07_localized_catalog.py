@@ -1,10 +1,10 @@
 import json
 
-from data_foundry.config import OUTPUT_DIR
+from data_foundry.config import OUTPUT_DIR, GLD_LAYER_DIR
 
 
-def load_json(name: str) -> dict | list:
-    path = OUTPUT_DIR / name
+def load_json(name: str, layer: str) -> dict | list:
+    path = OUTPUT_DIR / layer / name
     if path.exists():
         with open(path, encoding="utf-8") as f:
             return json.load(f)
@@ -13,15 +13,16 @@ def load_json(name: str) -> dict | list:
 
 def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    GLD_LAYER_DIR.mkdir(parents=True, exist_ok=True)
 
-    catalog = load_json("catalog.json")
+    catalog = load_json("catalog.json","brz")
     if not catalog:
         print("catalog.json not found. Run 01_download.py first.")
         return
 
-    translations = load_json("translations.json")
-    descriptions = load_json("descriptions.json")
-    desc_translations = load_json("description_translations.json")
+    translations = load_json("translations.json","slv")
+    descriptions = load_json("descriptions.json","slv")
+    desc_translations = load_json("description_translations.json","slv")
 
     localized = []
     for entry in catalog:
@@ -50,7 +51,7 @@ def main():
         }
         localized.append(record)
 
-    output_path = OUTPUT_DIR / "localized_catalog.json"
+    output_path = GLD_LAYER_DIR / "localized_catalog.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(localized, f, ensure_ascii=False, indent=2)
 
