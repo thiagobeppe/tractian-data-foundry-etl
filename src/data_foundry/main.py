@@ -2,6 +2,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from data_foundry.config import PDF_DIR, OUTPUT_DIR, BRZ_LAYER_DIR, SLV_LAYER_DIR, GLD_LAYER_DIR
+
 SCRIPTS_DIR = Path(__file__).resolve().parent / "scripts"
 
 STEPS = [
@@ -14,6 +16,11 @@ STEPS = [
     ("07_localized_catalog.py", "Assemble localized catalog"),
     ("08_universal_metadata.py", "Assemble universal metadata"),
 ]
+
+
+def setup_directories() -> None:
+    for d in (PDF_DIR, OUTPUT_DIR, BRZ_LAYER_DIR, SLV_LAYER_DIR, GLD_LAYER_DIR):
+        d.mkdir(parents=True, exist_ok=True)
 
 
 def run_step(script: str, description: str) -> bool:
@@ -32,6 +39,8 @@ def run_step(script: str, description: str) -> bool:
 def main():
     print("Domínio Público Data Pipeline")
     print("=" * 60)
+
+    setup_directories()
 
     results = {}
     for script, description in STEPS:

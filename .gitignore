@@ -19,4 +19,6 @@ uv.lock
 # Data (downloaded at runtime)
 data/pdfs/
 data/output/
+data/runs/
+data/covers/
 .DS_Store

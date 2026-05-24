@@ -9,7 +9,8 @@ from data_foundry.config import (
     LLM_API_KEY,
     LLM_BASE_URL,
     LLM_MODEL,
-    OUTPUT_DIR,
+    BRZ_LAYER_DIR,
+    SLV_LAYER_DIR,
     PDF_DIR,
 )
 
@@ -81,9 +82,9 @@ def describe_document(
 
 
 def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    BRZ_LAYER_DIR.mkdir(parents=True, exist_ok=True)
 
-    catalog_path = OUTPUT_DIR / "catalog.json"
+    catalog_path = BRZ_LAYER_DIR / "catalog.json"
     if catalog_path.exists():
         with open(catalog_path, encoding="utf-8") as f:
             catalog = {e["code"]: e for e in json.load(f)}
@@ -91,7 +92,7 @@ def main():
         catalog = {}
         print("Warning: catalog.json not found. Titles will be 'Unknown'.")
 
-    metadata_path = OUTPUT_DIR / "metadata.json"
+    metadata_path = BRZ_LAYER_DIR / "metadata.json"
     if metadata_path.exists():
         with open(metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
@@ -106,7 +107,7 @@ def main():
         print("No PDFs found in data/pdfs/. Run 01_download.py first.")
         return
 
-    desc_path = OUTPUT_DIR / "descriptions.json"
+    desc_path = SLV_LAYER_DIR / "descriptions.json"
     if desc_path.exists():
         with open(desc_path, encoding="utf-8") as f:
             descriptions = json.load(f)

@@ -2,7 +2,7 @@ import json
 
 from openai import OpenAI
 
-from data_foundry.config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, OUTPUT_DIR
+from data_foundry.config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL,  SLV_LAYER_DIR
 
 TARGET_LANGUAGES = {"en": "English", "es": "Spanish", "fr": "French"}
 
@@ -29,9 +29,9 @@ def translate_text(text: str, target_lang: str) -> str | None:
 
 
 def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    SLV_LAYER_DIR.mkdir(parents=True, exist_ok=True)
 
-    desc_path = OUTPUT_DIR / "descriptions.json"
+    desc_path = SLV_LAYER_DIR / "descriptions.json"
     if not desc_path.exists():
         print("descriptions.json not found. Run 03_describe.py first.")
         return
@@ -39,7 +39,7 @@ def main():
     with open(desc_path, encoding="utf-8") as f:
         descriptions = json.load(f)
 
-    trans_path = OUTPUT_DIR / "description_translations.json"
+    trans_path = SLV_LAYER_DIR / "description_translations.json"
     if trans_path.exists():
         with open(trans_path, encoding="utf-8") as f:
             translations = json.load(f)

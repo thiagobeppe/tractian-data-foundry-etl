@@ -1,10 +1,10 @@
 import json
 
-from data_foundry.config import OUTPUT_DIR, PDF_DIR
+from data_foundry.config import OUTPUT_DIR, PDF_DIR, GLD_LAYER_DIR
 
 
-def load_json(name: str) -> dict | list:
-    path = OUTPUT_DIR / name
+def load_json(name: str, layer: str) -> dict | list:
+    path = OUTPUT_DIR / layer / name
     if path.exists():
         with open(path, encoding="utf-8") as f:
             return json.load(f)
@@ -14,15 +14,15 @@ def load_json(name: str) -> dict | list:
 def main():
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    catalog = load_json("catalog.json")
+    catalog = load_json("catalog.json","brz")
     if not catalog:
         print("catalog.json not found. Run 01_download.py first.")
         return
 
-    metadata = load_json("metadata.json")
-    hashes_data = load_json("hashes.json")
+    metadata = load_json("metadata.json","brz")
+    hashes_data = load_json("hashes.json","brz")
     hashes = hashes_data.get("files", {}) if isinstance(hashes_data, dict) else {}
-    covers = load_json("covers.json")
+    covers = load_json("covers.json","slv")
 
     metadata_records = []
     for entry in catalog:
@@ -58,7 +58,7 @@ def main():
         }
         metadata_records.append(record)
 
-    output_path = OUTPUT_DIR / "universal_metadata.json"
+    output_path = GLD_LAYER_DIR / "universal_metadata.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(metadata_records, f, ensure_ascii=False, indent=2)
 

@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 from data_foundry.config import (
-    OUTPUT_DIR,
+    BRZ_LAYER_DIR,
     PDF_DIR,
 )
 
@@ -17,7 +17,7 @@ def compute_sha256(filepath: Path) -> str:
 
 
 def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    BRZ_LAYER_DIR.mkdir(parents=True, exist_ok=True)
 
     pdf_files = sorted(PDF_DIR.glob("*.pdf"))
     if not pdf_files:
@@ -47,7 +47,7 @@ def main():
         "files": hashes,
     }
 
-    output_path = OUTPUT_DIR / "hashes.json"
+    output_path = BRZ_LAYER_DIR / "hashes.json"
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 

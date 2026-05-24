@@ -2,7 +2,7 @@ import json
 
 from openai import OpenAI
 
-from data_foundry.config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, OUTPUT_DIR
+from data_foundry.config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, SLV_LAYER_DIR, BRZ_LAYER_DIR
 
 TARGET_LANGUAGES = {"en": "English", "es": "Spanish", "fr": "French"}
 
@@ -49,9 +49,9 @@ def translate_title(
 
 
 def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    SLV_LAYER_DIR.mkdir(parents=True, exist_ok=True)
 
-    catalog_path = OUTPUT_DIR / "catalog.json"
+    catalog_path = BRZ_LAYER_DIR / "catalog.json"
     if not catalog_path.exists():
         print("catalog.json not found. Run 01_download.py first.")
         return
@@ -59,14 +59,14 @@ def main():
     with open(catalog_path, encoding="utf-8") as f:
         catalog = json.load(f)
 
-    metadata_path = OUTPUT_DIR / "metadata.json"
+    metadata_path = BRZ_LAYER_DIR / "metadata.json"
     if metadata_path.exists():
         with open(metadata_path, encoding="utf-8") as f:
             metadata = json.load(f)
     else:
         metadata = {}
 
-    trans_path = OUTPUT_DIR / "translations.json"
+    trans_path = SLV_LAYER_DIR / "translations.json"
     if trans_path.exists():
         with open(trans_path, encoding="utf-8") as f:
             translations = json.load(f)
