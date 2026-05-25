@@ -1,0 +1,53 @@
+[
+  {
+    "id": "15713",
+    "title": {
+      "pt": "A escravidão",
+      "en": null,
+      "es": null,
+      "fr": null
+    },
+    "description": {
+      "pt": null,
+      "en": null,
+      "es": null,
+      "fr": null
+    },
+    "author": "Joaquim Nabuco",
+    "source": "[jn] Fundação Joaquim Nabuco"
+  },
+  {
+    "id": "15654",
+    "title": {
+      "pt": "A República é incontestável",
+      "en": null,
+      "es": null,
+      "fr": null
+    },
+    "description": {
+      "pt": null,
+      "en": null,
+      "es": null,
+      "fr": null
+    },
+    "author": "Joaquim Nabuco",
+    "source": "[jn] Fundação Joaquim Nabuco"
+  },
+  {
+    "id": "2268",
+    "title": {
+      "pt": "História do Brasil",
+      "en": null,
+      "es": null,
+      "fr": null
+    },
+    "description": {
+      "pt": null,
+      "en": null,
+      "es": null,
+      "fr": null
+    },
+    "author": "Frei Vicente de Salvador",
+    "source": "[cv] CultVox"
+  }
+]

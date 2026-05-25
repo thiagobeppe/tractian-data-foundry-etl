@@ -1,0 +1,17 @@
+{
+  "run_id": "20260525T102850_9b903de8",
+  "started_at": "2026-05-25T10:28:50.333256+00:00",
+  "completed_at": "2026-05-25T10:34:49.023031+00:00",
+  "status": "completed",
+  "steps": {
+    "01_download.py": {"status": "ok", "duration_seconds": 84.58},
+    "02_hash.py": {"status": "ok", "duration_seconds": 0.23},
+    "03_describe.py": {"status": "ok", "duration_seconds": 70.84},
+    "04_translate.py": {"status": "ok", "duration_seconds": 198.51},
+    "05_translate_descriptions.py": {"status": "ok", "duration_seconds": 0.5},
+    "06_covers.py": {"status": "ok", "duration_seconds": 3.79},
+    "07_localized_catalog.py": {"status": "ok", "duration_seconds": 0.05},
+    "08_universal_metadata.py": {"status": "ok", "duration_seconds": 0.04},
+    "09_quality_check.py": {"status": "ok", "duration_seconds": 0.05}
+  }
+}
