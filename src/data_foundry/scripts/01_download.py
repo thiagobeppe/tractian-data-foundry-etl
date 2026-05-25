@@ -76,7 +76,6 @@ def parse_listing(html: str) -> list[dict]:
         author = normalize_text(cells[3].get_text(strip=True))
         source = normalize_text(cells[4].get_text(strip=True))
         fmt = normalize_text(cells[5].get_text(strip=True))
-        # size comes with embedded \r\n and padding from the HTML table cell
         raw_size = normalize_text(cells[6].get_text(strip=True)) if len(cells) > 6 else None
         raw_accesses = cells[7].get_text(strip=True) if len(cells) > 7 else ""
         try:
@@ -108,8 +107,6 @@ def parse_detail_page(html: str) -> dict:
         "Categoria:": "category",
         "Idioma:": "language",
         "Instituição:/Parceiro": "institution",
-        # The year label varies by document type — theses use "Ano da Tese",
-        # general works may use "Ano:" or "Ano de publicação"
         "Ano da Tese": "year",
         "Ano de publicação": "year",
         "Ano:": "year",
@@ -177,13 +174,6 @@ def download_pdf(url: str, filepath: Path) -> bool:
 
 
 def scrape_all_entries(max_books: int = MAX_BOOKS, page_size: int = PAGE_SIZE) -> list[dict]:
-    """Paginate through the catalog listing and return up to max_books entries.
-
-    Stops when:
-      - a page returns fewer results than page_size (last page), or
-      - a page fetch fails, or
-      - the collected total reaches max_books (0 = no limit).
-    """
     all_entries: list[dict] = []
     seen_codes: set[str] = set()
     page = 1
@@ -218,12 +208,11 @@ def scrape_all_entries(max_books: int = MAX_BOOKS, page_size: int = PAGE_SIZE) -
             break
 
         if len(entries) < page_size:
-            # Page returned fewer items than requested: no further pages exist.
             print("  Last page reached.")
             break
 
         page += 1
-        time.sleep(1)  # polite delay between listing page requests
+        time.sleep(1)
 
     return all_entries
 

@@ -7,10 +7,7 @@ load_dotenv()
 
 BASE_URL = "https://dominiopublico.mec.gov.br/pesquisa"
 
-# How many results to request per listing page (the site's default is 10).
 PAGE_SIZE = int(os.getenv("PAGE_SIZE", "10"))
-
-# Hard cap on the total number of books to download. 0 = no limit.
 MAX_BOOKS = int(os.getenv("MAX_BOOKS", "0"))
 
 

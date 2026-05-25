@@ -88,7 +88,7 @@ def _check_silver(report: QualityReport, catalog: list[dict]) -> None:
             err = desc_entry["llm_error"]
             report.add(code, "silver", "description", "llm_error",
                        f"LLM failed to generate description: {err[:120]}")
-            # Collect unique error messages to detect systemic failures
+
             llm_errors_seen.add(err[:80])
         elif not desc_entry.get("description"):
             report.add(code, "silver", "description", "null_value",
