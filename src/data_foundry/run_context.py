@@ -23,7 +23,7 @@ class RunContext:
         self._steps: dict[str, dict] = {}
 
     def setup(self) -> None:
-        for d in (self.brz_dir, self.slv_dir, self.gld_dir):
+        for d in (self.pdf_dir,self.brz_dir, self.slv_dir, self.gld_dir):
             d.mkdir(parents=True, exist_ok=True)
         self._write_manifest("running")
 

@@ -43,10 +43,8 @@ def main():
     print("=" * 60)
 
     run_ctx = RunContext(RUNS_DIR)
-    run_ctx.setup
+    run_ctx.setup()
     print("=" * 60)
-
-    
 
     overall_status = "completed"
     for script, description in STEPS:

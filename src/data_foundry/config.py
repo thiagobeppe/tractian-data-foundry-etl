@@ -15,12 +15,12 @@ LIST_URL = (
 )
 
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
-PDF_DIR = DATA_DIR / "pdfs"
 RUNS_DIR = DATA_DIR / "runs"
 
 _run_id = os.getenv("RUN_ID", "default")
 RUN_BASE = RUNS_DIR / _run_id
 
+PDF_DIR = RUN_BASE / "pdfs"
 BRZ_LAYER_DIR = RUN_BASE / "brz"
 SLV_LAYER_DIR = RUN_BASE / "slv"
 GLD_LAYER_DIR = RUN_BASE / "gld"
