@@ -1,28 +1,32 @@
 import json
+from pathlib import Path
 
-from data_foundry.config import OUTPUT_DIR, PDF_DIR, GLD_LAYER_DIR
+from data_foundry.config import BRZ_LAYER_DIR, SLV_LAYER_DIR, GLD_LAYER_DIR, PDF_DIR
 
 
-def load_json(name: str, layer: str) -> dict | list:
-    path = OUTPUT_DIR / layer / name
+def load_json(path: Path) -> dict | list:
     if path.exists():
         with open(path, encoding="utf-8") as f:
             return json.load(f)
-    return {} if name != "catalog.json" else []
+    return []
 
 
 def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    GLD_LAYER_DIR.mkdir(parents=True, exist_ok=True)
 
-    catalog = load_json("catalog.json","brz")
+    catalog = load_json(BRZ_LAYER_DIR / "catalog.json")
     if not catalog:
         print("catalog.json not found. Run 01_download.py first.")
         return
 
-    metadata = load_json("metadata.json","brz")
-    hashes_data = load_json("hashes.json","brz")
+    metadata_raw = load_json(BRZ_LAYER_DIR / "metadata.json")
+    metadata = metadata_raw if isinstance(metadata_raw, dict) else {}
+
+    hashes_data = load_json(BRZ_LAYER_DIR / "hashes.json")
     hashes = hashes_data.get("files", {}) if isinstance(hashes_data, dict) else {}
-    covers = load_json("covers.json","slv")
+
+    covers_raw = load_json(SLV_LAYER_DIR / "covers.json")
+    covers = covers_raw if isinstance(covers_raw, dict) else {}
 
     metadata_records = []
     for entry in catalog:

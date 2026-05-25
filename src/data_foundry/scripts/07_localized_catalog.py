@@ -1,28 +1,35 @@
 import json
+from pathlib import Path
 
-from data_foundry.config import OUTPUT_DIR, GLD_LAYER_DIR
+from data_foundry.config import BRZ_LAYER_DIR, SLV_LAYER_DIR, GLD_LAYER_DIR
 
 
-def load_json(name: str, layer: str) -> dict | list:
-    path = OUTPUT_DIR / layer / name
+def load_json(path: Path) -> dict | list:
     if path.exists():
         with open(path, encoding="utf-8") as f:
             return json.load(f)
-    return {} if name != "catalog.json" else []
+    return []
 
 
 def main():
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     GLD_LAYER_DIR.mkdir(parents=True, exist_ok=True)
 
-    catalog = load_json("catalog.json","brz")
+    catalog = load_json(BRZ_LAYER_DIR / "catalog.json")
     if not catalog:
         print("catalog.json not found. Run 01_download.py first.")
         return
 
-    translations = load_json("translations.json","slv")
-    descriptions = load_json("descriptions.json","slv")
-    desc_translations = load_json("description_translations.json","slv")
+    translations = load_json(SLV_LAYER_DIR / "translations.json")
+    descriptions = load_json(SLV_LAYER_DIR / "descriptions.json")
+    desc_translations = load_json(SLV_LAYER_DIR / "description_translations.json")
+
+    # load_json returns [] for missing files; convert dicts-keyed-by-code to dict
+    if isinstance(translations, list):
+        translations = {}
+    if isinstance(descriptions, list):
+        descriptions = {}
+    if isinstance(desc_translations, list):
+        desc_translations = {}
 
     localized = []
     for entry in catalog:
