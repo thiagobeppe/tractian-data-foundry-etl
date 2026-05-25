@@ -1,0 +1,22 @@
+{
+  "run_id": "20260525T102850_9b903de8",
+  "generated_at": "2026-05-25T10:34:49.023031+00:00",
+  "summary": {
+    "total_documents": 3,
+    "documents_with_issues": 3,
+    "documents_clean": 0,
+    "total_issues": 9
+  },
+  "duplicates": {},
+  "issues": [
+    {"doc_id": "15713", "stage": "silver", "field": "description", "issue_type": "llm_error", "detail": "Connection error."},
+    {"doc_id": "15713", "stage": "silver", "field": "title_en", "issue_type": "llm_error", "detail": "Connection error."},
+    {"doc_id": "15713", "stage": "silver", "field": "title_es", "issue_type": "llm_error", "detail": "Connection error."},
+    {"doc_id": "15654", "stage": "silver", "field": "description", "issue_type": "llm_error", "detail": "Connection error."},
+    {"doc_id": "15654", "stage": "silver", "field": "title_en", "issue_type": "llm_error", "detail": "Connection error."},
+    {"doc_id": "15654", "stage": "silver", "field": "title_es", "issue_type": "llm_error", "detail": "Connection error."},
+    {"doc_id": "2268", "stage": "silver", "field": "description", "issue_type": "llm_error", "detail": "Connection error."},
+    {"doc_id": "2268", "stage": "silver", "field": "title_en", "issue_type": "llm_error", "detail": "Connection error."},
+    {"doc_id": "2268", "stage": "silver", "field": "title_es", "issue_type": "llm_error", "detail": "Connection error."}
+  ]
+}

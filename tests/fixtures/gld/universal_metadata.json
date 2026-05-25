@@ -1,0 +1,41 @@
+[
+  {
+    "id": "15713",
+    "cover_path": "covers/a9c3e4c5a074105eecbff9547ff3c67808426d380b9853179a977de21f9e6887.png",
+    "cover_hash": "a9c3e4c5a074105eecbff9547ff3c67808426d380b9853179a977de21f9e6887",
+    "document_hash": "ed6ca8922b5b2e1c3616875f5825a143713f128402db8e2f1df17c25c3fe274b",
+    "accesses": 39829,
+    "size_bytes": 13968344,
+    "category": "História",
+    "language": "Português",
+    "institution": "[jn] Fundação Joaquim Nabuco",
+    "year": null,
+    "download_url": "https://dominiopublico.mec.gov.br/pesquisa/DetalheObraDownload.do?select_action=&co_obra=15713&co_midia=2"
+  },
+  {
+    "id": "15654",
+    "cover_path": "covers/825149e2dd60092acfce3c3bede8d13d6ab1cce914e8874d519ecff67a3ac468.png",
+    "cover_hash": "825149e2dd60092acfce3c3bede8d13d6ab1cce914e8874d519ecff67a3ac468",
+    "document_hash": "56d5d3a47a1d8576c35fd34b0b8e5d5424b354df52fedb9090886031366a10db",
+    "accesses": 26979,
+    "size_bytes": 4886738,
+    "category": "História",
+    "language": "Português",
+    "institution": "[jn] Fundação Joaquim Nabuco",
+    "year": null,
+    "download_url": "https://dominiopublico.mec.gov.br/pesquisa/DetalheObraDownload.do?select_action=&co_obra=15654&co_midia=2"
+  },
+  {
+    "id": "2268",
+    "cover_path": "covers/497d3dc17612270286c172a4b879c73132f8fc307499a593c8a87163774e674b.png",
+    "cover_hash": "497d3dc17612270286c172a4b879c73132f8fc307499a593c8a87163774e674b",
+    "document_hash": "8a1ec5fee9879fda35ec53c817f0a4125d80368d89b693b4d327528db737e4ca",
+    "accesses": 25144,
+    "size_bytes": 617646,
+    "category": "História",
+    "language": "Português",
+    "institution": "[cv] CultVox",
+    "year": null,
+    "download_url": "https://dominiopublico.mec.gov.br/pesquisa/DetalheObraDownload.do?select_action=&co_obra=2268&co_midia=2"
+  }
+]
