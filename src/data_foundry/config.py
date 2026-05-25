@@ -6,13 +6,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_URL = "https://dominiopublico.mec.gov.br/pesquisa"
-LIST_URL = (
-    f"{BASE_URL}/ResultadoPesquisaObraForm.do?"
-    "first=10&skip=0&ds_titulo=&co_autor=&no_autor="
-    "&co_categoria=41&pagina=1&select_action=Submit"
-    "&co_midia=2&co_obra=&co_idioma="
-    "&colunaOrdenar=NU_PAGE_HITS&ordem=desc"
-)
+
+PAGE_SIZE = int(os.getenv("PAGE_SIZE", "10"))
+MAX_BOOKS = int(os.getenv("MAX_BOOKS", "0"))
+
+
+def build_list_url(page: int, page_size: int = PAGE_SIZE) -> str:
+    """Build the catalog listing URL for the given 1-based page number."""
+    skip = (page - 1) * page_size
+    return (
+        f"{BASE_URL}/ResultadoPesquisaObraForm.do?"
+        f"first={page_size}&skip={skip}&ds_titulo=&co_autor=&no_autor="
+        f"&co_categoria=41&pagina={page}&select_action=Submit"
+        f"&co_midia=2&co_obra=&co_idioma="
+        f"&colunaOrdenar=NU_PAGE_HITS&ordem=desc"
+    )
 
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 RUNS_DIR = DATA_DIR / "runs"

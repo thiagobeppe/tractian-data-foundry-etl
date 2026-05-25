@@ -23,7 +23,6 @@ def main():
     descriptions = load_json(SLV_LAYER_DIR / "descriptions.json")
     desc_translations = load_json(SLV_LAYER_DIR / "description_translations.json")
 
-    # load_json returns [] for missing files; convert dicts-keyed-by-code to dict
     if isinstance(translations, list):
         translations = {}
     if isinstance(descriptions, list):

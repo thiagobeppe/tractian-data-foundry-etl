@@ -9,9 +9,11 @@ from playwright.sync_api import sync_playwright
 
 from data_foundry.config import (
     BASE_URL,
-    LIST_URL,
+    MAX_BOOKS,
+    PAGE_SIZE,
     PDF_DIR,
     BRZ_LAYER_DIR,
+    build_list_url,
 )
 from data_foundry.quality import normalize_text
 
@@ -74,7 +76,6 @@ def parse_listing(html: str) -> list[dict]:
         author = normalize_text(cells[3].get_text(strip=True))
         source = normalize_text(cells[4].get_text(strip=True))
         fmt = normalize_text(cells[5].get_text(strip=True))
-        # size comes with embedded \r\n and padding from the HTML table cell
         raw_size = normalize_text(cells[6].get_text(strip=True)) if len(cells) > 6 else None
         raw_accesses = cells[7].get_text(strip=True) if len(cells) > 7 else ""
         try:
@@ -106,8 +107,6 @@ def parse_detail_page(html: str) -> dict:
         "Categoria:": "category",
         "Idioma:": "language",
         "Instituição:/Parceiro": "institution",
-        # The year label varies by document type — theses use "Ano da Tese",
-        # general works may use "Ano:" or "Ano de publicação"
         "Ano da Tese": "year",
         "Ano de publicação": "year",
         "Ano:": "year",
@@ -174,19 +173,57 @@ def download_pdf(url: str, filepath: Path) -> bool:
     return False
 
 
+def scrape_all_entries(max_books: int = MAX_BOOKS, page_size: int = PAGE_SIZE) -> list[dict]:
+    all_entries: list[dict] = []
+    seen_codes: set[str] = set()
+    page = 1
+    limit_msg = f" (limit: {max_books})" if max_books else " (no limit)"
+    print(f"Paginating catalog{limit_msg}, page_size={page_size}")
+
+    while True:
+        url = build_list_url(page, page_size)
+        print(f"\nFetching page {page}...")
+        html = fetch_page(url)
+        if not html:
+            print(f"  Failed to fetch page {page} — stopping pagination.")
+            break
+
+        entries = parse_listing(html)
+        if not entries:
+            print(f"  Page {page} returned no entries — end of catalog.")
+            break
+
+        new_count = 0
+        for entry in entries:
+            if entry["code"] not in seen_codes:
+                seen_codes.add(entry["code"])
+                all_entries.append(entry)
+                new_count += 1
+
+        print(f"  +{new_count} entries (total so far: {len(all_entries)})")
+
+        if max_books and len(all_entries) >= max_books:
+            all_entries = all_entries[:max_books]
+            print(f"  Reached MAX_BOOKS={max_books} — stopping.")
+            break
+
+        if len(entries) < page_size:
+            print("  Last page reached.")
+            break
+
+        page += 1
+        time.sleep(1)
+
+    return all_entries
+
+
 def main():
-    print("Fetching listing page...")
-    html = fetch_page(LIST_URL)
-    if not html:
-        print("Failed to fetch listing page.")
-        return
-
-    entries = parse_listing(html)
-    print(f"Found {len(entries)} entries")
-
+    entries = scrape_all_entries()
     if not entries:
-        print("No entries found. Check if page structure changed.")
+        print("No entries found. Check if the site structure changed.")
         return
+
+    print(f"\nProcessing {len(entries)} entries...")
 
     catalog = []
     all_metadata = {}

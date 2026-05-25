@@ -82,8 +82,6 @@ def main():
         with open(trans_path, "w", encoding="utf-8") as f:
             json.dump(translations, f, ensure_ascii=False, indent=2)
 
-    # Always write the file so downstream scripts don't silently load an empty dict.
-    # This matters especially when all descriptions are null (0 entries to translate).
     with open(trans_path, "w", encoding="utf-8") as f:
         json.dump(translations, f, ensure_ascii=False, indent=2)
 
