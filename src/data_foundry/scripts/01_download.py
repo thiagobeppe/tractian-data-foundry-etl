@@ -9,9 +9,11 @@ from playwright.sync_api import sync_playwright
 
 from data_foundry.config import (
     BASE_URL,
-    LIST_URL,
+    MAX_BOOKS,
+    PAGE_SIZE,
     PDF_DIR,
     BRZ_LAYER_DIR,
+    build_list_url,
 )
 from data_foundry.quality import normalize_text
 
@@ -174,19 +176,65 @@ def download_pdf(url: str, filepath: Path) -> bool:
     return False
 
 
+def scrape_all_entries(max_books: int = MAX_BOOKS, page_size: int = PAGE_SIZE) -> list[dict]:
+    """Paginate through the catalog listing and return up to max_books entries.
+
+    Stops when:
+      - a page returns fewer results than page_size (last page), or
+      - a page fetch fails, or
+      - the collected total reaches max_books (0 = no limit).
+    """
+    all_entries: list[dict] = []
+    seen_codes: set[str] = set()
+    page = 1
+    limit_msg = f" (limit: {max_books})" if max_books else " (no limit)"
+    print(f"Paginating catalog{limit_msg}, page_size={page_size}")
+
+    while True:
+        url = build_list_url(page, page_size)
+        print(f"\nFetching page {page}...")
+        html = fetch_page(url)
+        if not html:
+            print(f"  Failed to fetch page {page} — stopping pagination.")
+            break
+
+        entries = parse_listing(html)
+        if not entries:
+            print(f"  Page {page} returned no entries — end of catalog.")
+            break
+
+        new_count = 0
+        for entry in entries:
+            if entry["code"] not in seen_codes:
+                seen_codes.add(entry["code"])
+                all_entries.append(entry)
+                new_count += 1
+
+        print(f"  +{new_count} entries (total so far: {len(all_entries)})")
+
+        if max_books and len(all_entries) >= max_books:
+            all_entries = all_entries[:max_books]
+            print(f"  Reached MAX_BOOKS={max_books} — stopping.")
+            break
+
+        if len(entries) < page_size:
+            # Page returned fewer items than requested: no further pages exist.
+            print("  Last page reached.")
+            break
+
+        page += 1
+        time.sleep(1)  # polite delay between listing page requests
+
+    return all_entries
+
+
 def main():
-    print("Fetching listing page...")
-    html = fetch_page(LIST_URL)
-    if not html:
-        print("Failed to fetch listing page.")
-        return
-
-    entries = parse_listing(html)
-    print(f"Found {len(entries)} entries")
-
+    entries = scrape_all_entries()
     if not entries:
-        print("No entries found. Check if page structure changed.")
+        print("No entries found. Check if the site structure changed.")
         return
+
+    print(f"\nProcessing {len(entries)} entries...")
 
     catalog = []
     all_metadata = {}
