@@ -11,7 +11,8 @@ client = OpenAI(base_url=LLM_BASE_URL, api_key=LLM_API_KEY)
 
 def translate_title(
     title: str, target_lang: str, metadata: dict | None = None
-) -> str | None:
+) -> tuple[str | None, str | None]:
+    """Return (translation, error_message). One of the two will always be None."""
     meta_ctx = ""
     if metadata:
         parts = [
@@ -42,10 +43,12 @@ def translate_title(
         result = result.strip("\"'")
         if "\n" in result:
             result = result.split("\n")[0].strip()
-        return result
+        if not result:
+            return None, "empty_response"
+        return result, None
     except Exception as e:
         print(f"  LLM error: {e}")
-    return None
+        return None, str(e)
 
 
 def main():
@@ -91,12 +94,17 @@ def main():
         print(f"[{i + 1}/{len(catalog)}] {title[:50]}...")
 
         meta = metadata.get(code)
-        entry_translations = {"original": title}
+        entry_translations: dict = {"original": title}
+        errors: dict[str, str] = {}
         for lang_key, lang_name in TARGET_LANGUAGES.items():
-            translated = translate_title(title, lang_name, meta)
+            translated, llm_error = translate_title(title, lang_name, meta)
             entry_translations[lang_key] = translated
             if translated:
                 print(f"  {lang_key}: {translated[:60]}")
+            elif llm_error:
+                errors[lang_key] = llm_error
+        if errors:
+            entry_translations["errors"] = errors
 
         translations[code] = entry_translations
 

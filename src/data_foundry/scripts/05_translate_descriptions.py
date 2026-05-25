@@ -2,14 +2,15 @@ import json
 
 from openai import OpenAI
 
-from data_foundry.config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL,  SLV_LAYER_DIR
+from data_foundry.config import LLM_API_KEY, LLM_BASE_URL, LLM_MODEL, SLV_LAYER_DIR
 
 TARGET_LANGUAGES = {"en": "English", "es": "Spanish", "fr": "French"}
 
 client = OpenAI(base_url=LLM_BASE_URL, api_key=LLM_API_KEY)
 
 
-def translate_text(text: str, target_lang: str) -> str | None:
+def translate_text(text: str, target_lang: str) -> tuple[str | None, str | None]:
+    """Return (translation, error_message). One of the two will always be None."""
     prompt = (
         f"Translate the following Portuguese text to {target_lang}. "
         f"Return ONLY the translated text, nothing else.\n\n"
@@ -22,10 +23,13 @@ def translate_text(text: str, target_lang: str) -> str | None:
             messages=[{"role": "user", "content": prompt}],
             timeout=60,
         )
-        return resp.choices[0].message.content.strip()
+        result = resp.choices[0].message.content.strip()
+        if not result:
+            return None, "empty_response"
+        return result, None
     except Exception as e:
         print(f"  LLM error: {e}")
-    return None
+        return None, str(e)
 
 
 def main():
@@ -61,17 +65,27 @@ def main():
         description = entry["description"]
         print(f"[{i + 1}/{len(entries)}] {title[:50]}...")
 
-        entry_translations = {"original": description}
+        entry_translations: dict = {"original": description}
+        errors: dict[str, str] = {}
         for lang_key, lang_name in TARGET_LANGUAGES.items():
-            translated = translate_text(description, lang_name)
+            translated, llm_error = translate_text(description, lang_name)
             entry_translations[lang_key] = translated
             if translated:
                 print(f"  {lang_key}: {translated[:60]}")
+            elif llm_error:
+                errors[lang_key] = llm_error
+        if errors:
+            entry_translations["errors"] = errors
 
         translations[code] = entry_translations
 
         with open(trans_path, "w", encoding="utf-8") as f:
             json.dump(translations, f, ensure_ascii=False, indent=2)
+
+    # Always write the file so downstream scripts don't silently load an empty dict.
+    # This matters especially when all descriptions are null (0 entries to translate).
+    with open(trans_path, "w", encoding="utf-8") as f:
+        json.dump(translations, f, ensure_ascii=False, indent=2)
 
     translated = sum(1 for t in translations.values() if t.get("en"))
     print(f"\nDone. {translated}/{len(translations)} descriptions translated.")

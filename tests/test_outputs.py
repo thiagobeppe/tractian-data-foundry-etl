@@ -102,3 +102,28 @@ def test_runs_index_exists():
     index = json.loads(index_path.read_text(encoding="utf-8"))
     assert len(index) >= 1
     assert index[-1].get("run_id"), "last index entry has no run_id"
+
+
+# --- data quality ---
+
+def test_quality_report_exists():
+    report_path = _run_dir() / "quality_report.json"
+    assert report_path.exists(), "quality_report.json missing"
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    assert report.get("run_id"), "run_id missing from quality report"
+    summary = report.get("summary", {})
+    assert "total_documents" in summary, "summary.total_documents missing"
+    assert "total_issues" in summary, "summary.total_issues missing"
+
+
+def test_quality_no_dirty_fields():
+    catalog = load_json("catalog.json")
+    for entry in catalog:
+        size = entry.get("size") or ""
+        assert "\r" not in size and "\n" not in size, (
+            f"Dirty size field in {entry.get('code')}: {repr(size)}"
+        )
+        accesses = entry.get("accesses")
+        assert not isinstance(accesses, str), (
+            f"accesses should be int, got string in {entry.get('code')}: {repr(accesses)}"
+        )

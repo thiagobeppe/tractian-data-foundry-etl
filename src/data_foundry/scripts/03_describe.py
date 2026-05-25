@@ -45,7 +45,8 @@ def format_metadata(meta: dict) -> str:
 
 def describe_document(
     images: list[str], title: str, metadata: dict | None = None
-) -> str | None:
+) -> tuple[str | None, str | None]:
+    """Return (description, error_message). One of the two will always be None."""
     meta_ctx = ""
     if metadata:
         meta_ctx = f"\n\nDocument metadata:\n{format_metadata(metadata)}\n"
@@ -75,10 +76,13 @@ def describe_document(
             messages=[{"role": "user", "content": content}],
             timeout=120,
         )
-        return resp.choices[0].message.content.strip()
+        text = resp.choices[0].message.content.strip()
+        if not text:
+            return None, "empty_response"
+        return text, None
     except Exception as e:
         print(f"  LLM error: {e}")
-    return None
+        return None, str(e)
 
 
 def main():
@@ -137,12 +141,13 @@ def main():
             continue
 
         meta = metadata.get(code)
-        description = describe_document(images, title, meta)
+        description, llm_error = describe_document(images, title, meta)
 
-        descriptions[code] = {
-            "title": title,
-            "description": description,
-        }
+        record: dict = {"title": title, "description": description}
+        if llm_error:
+            record["llm_error"] = llm_error
+
+        descriptions[code] = record
 
         with open(desc_path, "w", encoding="utf-8") as f:
             json.dump(descriptions, f, ensure_ascii=False, indent=2)
@@ -150,7 +155,7 @@ def main():
         if description:
             print(f"  → {description[:100]}...")
         else:
-            print("  → No description generated")
+            print(f"  → No description ({llm_error})")
 
     described = sum(1 for d in descriptions.values() if d.get("description"))
     print(f"\nDone. {described}/{len(descriptions)} documents described.")
