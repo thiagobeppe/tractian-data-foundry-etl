@@ -57,7 +57,8 @@ def test_output_file_exists(filename):
 # --- minimum volume ---
 
 def test_minimum_pdfs():
-    assert len(list(PDF_DIR.glob("*.pdf"))) >= MIN_ENTRIES
+    pdf_dir = _run_dir() / "pdfs"
+    assert len(list(pdf_dir.glob("*.pdf"))) >= MIN_ENTRIES
 
 
 # --- gold layer correctness ---
