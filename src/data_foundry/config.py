@@ -16,10 +16,14 @@ LIST_URL = (
 
 DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 PDF_DIR = DATA_DIR / "pdfs"
-OUTPUT_DIR = DATA_DIR / "runs"
-BRZ_LAYER_DIR = DATA_DIR / "runs" / "brz"
-SLV_LAYER_DIR = DATA_DIR / "runs" / "slv"
-GLD_LAYER_DIR = DATA_DIR / "runs" / "gld"
+RUNS_DIR = DATA_DIR / "runs"
+
+_run_id = os.getenv("RUN_ID", "default")
+RUN_BASE = RUNS_DIR / _run_id
+
+BRZ_LAYER_DIR = RUN_BASE / "brz"
+SLV_LAYER_DIR = RUN_BASE / "slv"
+GLD_LAYER_DIR = RUN_BASE / "gld"
 
 LLM_BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1")
 LLM_API_KEY = os.getenv("LLM_API_KEY", "ollama")
