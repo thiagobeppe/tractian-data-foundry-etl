@@ -29,6 +29,7 @@ _run_id = os.getenv("RUN_ID", "default")
 RUN_BASE = RUNS_DIR / _run_id
 
 PDF_DIR = RUN_BASE / "pdfs"
+COVERS_DIR = RUN_BASE / "covers"
 BRZ_LAYER_DIR = RUN_BASE / "brz"
 SLV_LAYER_DIR = RUN_BASE / "slv"
 GLD_LAYER_DIR = RUN_BASE / "gld"

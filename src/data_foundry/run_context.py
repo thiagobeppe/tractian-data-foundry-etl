@@ -16,6 +16,7 @@ class RunContext:
         self.runs_dir = runs_dir
         self.run_dir = runs_dir / self.run_id
         self.pdf_dir = self.run_dir / "pdfs"
+        self.covers_dir = self.run_dir / "covers"
         self.brz_dir = self.run_dir / "brz"
         self.slv_dir = self.run_dir / "slv"
         self.gld_dir = self.run_dir / "gld"
@@ -23,7 +24,7 @@ class RunContext:
         self._steps: dict[str, dict] = {}
 
     def setup(self) -> None:
-        for d in (self.pdf_dir,self.brz_dir, self.slv_dir, self.gld_dir):
+        for d in (self.pdf_dir, self.covers_dir, self.brz_dir, self.slv_dir, self.gld_dir):
             d.mkdir(parents=True, exist_ok=True)
         self._write_manifest("running")
 
