@@ -4,9 +4,7 @@ from pathlib import Path
 
 import fitz
 
-from data_foundry.config import DATA_DIR, SLV_LAYER_DIR, PDF_DIR
-
-COVERS_DIR = DATA_DIR / "covers"
+from data_foundry.config import COVERS_DIR, RUN_BASE, SLV_LAYER_DIR, PDF_DIR
 
 
 def extract_cover(pdf_path: Path) -> tuple[Path | None, str | None]:
@@ -33,7 +31,7 @@ def main():
 
     pdf_files = sorted(PDF_DIR.glob("*.pdf"))
     if not pdf_files:
-        print("No PDFs found in data/pdfs/. Run 01_download.py first.")
+        print("No PDFs found. Run 01_download.py first.")
         return
 
     covers_path = SLV_LAYER_DIR / "covers.json"
@@ -56,7 +54,7 @@ def main():
         cover_path, img_hash = extract_cover(pdf)
         if cover_path:
             covers[code] = {
-                "path": str(cover_path.relative_to(DATA_DIR)),
+                "path": str(cover_path.relative_to(RUN_BASE)),
                 "hash": img_hash,
             }
             print(f"  → {cover_path.name}")
