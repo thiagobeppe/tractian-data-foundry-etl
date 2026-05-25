@@ -11,8 +11,9 @@ from data_foundry.config import (
     BASE_URL,
     LIST_URL,
     PDF_DIR,
-    BRZ_LAYER_DIR
+    BRZ_LAYER_DIR,
 )
+from data_foundry.quality import normalize_text
 
 SESSION = cffi_requests.Session(impersonate="chrome")
 
@@ -69,12 +70,17 @@ def parse_listing(html: str) -> list[dict]:
         if "co_obra=" in href:
             code = href.split("co_obra=")[-1].strip("'\" ")
 
-        title = link.get_text(strip=True)
-        author = cells[3].get_text(strip=True)
-        source = cells[4].get_text(strip=True)
-        fmt = cells[5].get_text(strip=True)
-        size = cells[6].get_text(strip=True) if len(cells) > 6 else ""
-        accesses = cells[7].get_text(strip=True) if len(cells) > 7 else ""
+        title = normalize_text(link.get_text(strip=True))
+        author = normalize_text(cells[3].get_text(strip=True))
+        source = normalize_text(cells[4].get_text(strip=True))
+        fmt = normalize_text(cells[5].get_text(strip=True))
+        # size comes with embedded \r\n and padding from the HTML table cell
+        raw_size = normalize_text(cells[6].get_text(strip=True)) if len(cells) > 6 else None
+        raw_accesses = cells[7].get_text(strip=True) if len(cells) > 7 else ""
+        try:
+            accesses = int(raw_accesses.replace(",", "").replace(".", "").strip())
+        except (ValueError, AttributeError):
+            accesses = None
 
         if code and title:
             entries.append(
@@ -84,7 +90,7 @@ def parse_listing(html: str) -> list[dict]:
                     "author": author,
                     "source": source,
                     "format": fmt,
-                    "size": size,
+                    "size": raw_size,
                     "accesses": accesses,
                 }
             )
@@ -100,7 +106,11 @@ def parse_detail_page(html: str) -> dict:
         "Categoria:": "category",
         "Idioma:": "language",
         "Instituição:/Parceiro": "institution",
+        # The year label varies by document type — theses use "Ano da Tese",
+        # general works may use "Ano:" or "Ano de publicação"
         "Ano da Tese": "year",
+        "Ano de publicação": "year",
+        "Ano:": "year",
         "Acessos:": "accesses",
     }
 
@@ -121,7 +131,7 @@ def parse_detail_page(html: str) -> dict:
             current_field = matched_label
         elif current_field and text and text != "\xa0":
             if current_field not in metadata:
-                metadata[current_field] = text
+                metadata[current_field] = normalize_text(text)
             current_field = None
 
     return metadata

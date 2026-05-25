@@ -18,6 +18,7 @@ STEPS = [
     ("06_covers.py", "Extract cover pages"),
     ("07_localized_catalog.py", "Assemble localized catalog"),
     ("08_universal_metadata.py", "Assemble universal metadata"),
+    ("09_quality_check.py", "Validate outputs and write quality report"),
 ]
 
 
